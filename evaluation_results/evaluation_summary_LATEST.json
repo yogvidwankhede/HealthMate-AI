@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "evaluation_date": "2025-10-20T19:57:39.366493",
+    "total_queries": 535,
+    "results_file": "evaluation_results/evaluation_results_20251020_195739.csv"
+  },
+  "metrics": {
+    "BLEU": {
+      "average": 0.3376806759013894,
+      "min": 0.05263157894736842,
+      "max": 0.9230769230769231,
+      "std": 0.13268958702721093
+    },
+    "ROUGE_L": {
+      "average": 0.2628301184474015,
+      "min": 0.034482758620689655,
+      "max": 0.6478873239436619,
+      "std": 0.09799640799910979
+    },
+    "Max_Score": {
+      "average": 0.341482917739598,
+      "min": 0.05263157894736842,
+      "max": 0.9230769230769231,
+      "std": 0.13153624144778844
+    }
+  },
+  "passing_criteria": {
+    "BLEU_target_0.5": false,
+    "ROUGE_L_target_0.5": false
+  }
+}
