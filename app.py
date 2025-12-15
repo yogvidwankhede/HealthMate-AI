@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 from src.prompt import system_prompt
 import os
 
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+os.environ['OMP_NUM_THREADS'] = '1'
+
 # Initialize Flask app
 app = Flask(__name__)
 
