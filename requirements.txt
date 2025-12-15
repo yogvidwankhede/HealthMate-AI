@@ -13,9 +13,9 @@ pinecone==7.3.0
 openai==1.106.1
 
 # AI/ML dependencies
-torch==2.5.1+cu121
-torchvision==0.20.1+cu121
-torchaudio==2.5.1+cu121
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
 tensorflow==2.20.0
 tf_keras==2.20.1
 transformers==4.56.1
