@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+venv/
+env/
+
+# Environment
+.env
+
+# Data & Models (if you have local models)
+data/
+*.pdf
+*.csv
+models/
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Large files
+Embedding/
+LLM/
+*.bin
+*.pt
+*.pth
