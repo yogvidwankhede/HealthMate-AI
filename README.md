@@ -588,9 +588,4 @@ If you use this work in your research, please cite:
 }
 ```
 
-
-**Built with ❤️ by Yogvid Wankhede & Leonardo Nan**
-
-[🌐 Live Demo](https://healthmate-ai.onrender.com) | [📊 HuggingFace Model](https://huggingface.co/yogvidwankhede/healthmate-medical-embeddings) | [📖 Documentation](https://github.com/yogvidwankhede/HealthMate-AI/wiki)
-
 </div>
