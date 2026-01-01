@@ -5,11 +5,6 @@
 [![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7.svg)](https://render.com)
 
 > **A Retrieval-Augmented Generation (RAG) medical chatbot delivering reliable, grounded medical information through fine-tuned embeddings and LLMs.**
-
-**Authors:** Yogvid Wankhede & Leonardo Nan  
-**Institution:** Washington University in St. Louis  
-**Course:** ESE 5971 - Practicum in Data Analytics and Statistics
-
 ---
 
 ## 📋 Table of Contents
