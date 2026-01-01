@@ -18,10 +18,8 @@
 - [Usage](#-usage)
 - [Fine-Tuning Process](#-fine-tuning-process)
 - [Deployment](#-deployment)
-- [Results & Visualizations](#-results--visualizations)
 - [Technologies Used](#-technologies-used)
 - [Future Work](#-future-work)
-- [Contributing](#-contributing)
 - [License](#-license)
 
 ---
@@ -472,54 +470,6 @@ If deployment fails with "Out of memory":
 
 ---
 
-## 📊 Results & Visualizations
-
-### Embedding Model Comparison
-
-![Model Comparison](all_models_comprehensive_comparison.png)
-
-Shows all 7 models ranked by performance with improvement percentages.
-
-### Performance Metrics Table
-
-![Metrics Table](presentation_slide_2_metrics.png)
-
-Detailed Spearman scores and statistical summary for each model.
-
-### LLM Similarity Analysis
-
-![LLM Similarity](llm_similarity_to_reference.png)
-
-Per-prompt cosine similarity between GPT-4o and Mistral-7B responses compared to reference answers.
-
-### Embedding Space Visualization
-
-**t-SNE Projection:**
-![t-SNE](emb_scatter_tsne.png)
-
-**PCA Projection:**
-![PCA](emb_scatter_pca.png)
-
-Shows medical concepts clustering together, with distractor sentences separated.
-
-### Cluster Consistency
-
-![Cluster Consistency](embedding_cluster_consistency.png)
-
-ARI and NMI metrics for different k-means cluster counts.
-
-### Cosine Similarity Heatmaps
-
-![Heatmaps](emb_cosine_heatmaps_delta.png)
-
-Left: Base model | Center: Fine-tuned | Right: Improvement delta
-
-### IIDR Metric
-
-![IIDR](emb_iidr_with_ci.png)
-
-Intra-cluster to Inter-cluster Distance Ratio - higher is better. Shows 18% improvement.
-
 ---
 
 ## 🛠️ Technologies Used
@@ -619,20 +569,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Hugging Face** - Model hosting & transformers library
 - **Pinecone** - Vector database platform
 - **OpenAI** - GPT-4o API access
-- **Washington University in St. Louis** - Research support
-- **Dr. [Professor Name]** - Course instructor & advisor
 
 ---
-
-## 📧 Contact
-
-**Yogvid Wankhede**  
-Email: yogvidwankhede@wustl.edu  
-GitHub: [@yogvidwankhede](https://github.com/yogvidwankhede)
-
-**Leonardo Nan**  
-Email: l.nan@wustl.edu  
-GitHub: [@leonardonan](https://github.com/leonardonan)
 
 ---
 
@@ -650,17 +588,6 @@ If you use this work in your research, please cite:
 }
 ```
 
----
-
-## ⭐ Star History
-
-If you find this project useful, please consider giving it a star! ⭐
-
-[![Star History Chart](https://api.star-history.com/svg?repos=yogvidwankhede/HealthMate-AI&type=Date)](https://star-history.com/#yogvidwankhede/HealthMate-AI&Date)
-
----
-
-<div align="center">
 
 **Built with ❤️ by Yogvid Wankhede & Leonardo Nan**
 
