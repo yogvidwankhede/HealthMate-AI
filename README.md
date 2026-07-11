@@ -10,6 +10,7 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
+- [Published Models](#-published-models-on-hugging-face)
 - [Key Features](#-key-features)
 - [Architecture](#-architecture)
 - [Performance Metrics](#-performance-metrics)
@@ -34,6 +35,30 @@ HealthMate-AI is an advanced medical information chatbot that combines:
 4. **Production Deployment** - Live web application on Render
 
 The system retrieves contextually relevant information from *The Gale Encyclopedia of Medicine* and generates accurate, trustworthy responses using state-of-the-art language models.
+
+---
+
+## 🤗 Published Models on Hugging Face
+
+All fine-tuned models are publicly available:
+
+| Model | Description | Link |
+|-------|-------------|------|
+| **healthmate-mistral-7b-medical-lora** | LoRA adapters for Mistral-7B-Instruct-v0.2, fine-tuned on medical instruction data (3 seeds: 42 at root, 123/999 in subfolders) | [🤗 Hub](https://huggingface.co/yogvidwankhede/healthmate-mistral-7b-medical-lora) |
+| **healthmate-minilm-l6-v2-medical-3fold** | Fine-tuned all-MiniLM-L6-v2 embeddings, 3-fold CV ensemble (Spearman 0.8039, +18.31% vs base) | [🤗 Hub](https://huggingface.co/yogvidwankhede/healthmate-minilm-l6-v2-medical-3fold) |
+| **healthmate-minilm-l6-v2-medical-best2** | Ensemble of the 2 best CV folds (Spearman 0.8037) | [🤗 Hub](https://huggingface.co/yogvidwankhede/healthmate-minilm-l6-v2-medical-best2) |
+
+```python
+# Embeddings
+from sentence_transformers import SentenceTransformer
+embedder = SentenceTransformer("yogvidwankhede/healthmate-minilm-l6-v2-medical-3fold")
+
+# LLM (LoRA adapter on Mistral-7B)
+from transformers import AutoModelForCausalLM
+from peft import PeftModel
+base = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2", device_map="auto")
+model = PeftModel.from_pretrained(base, "yogvidwankhede/healthmate-mistral-7b-medical-lora")
+```
 
 ---
 
@@ -231,7 +256,7 @@ Create a `.env` file in the root directory:
 # Required for production deployment
 PINECONE_API_KEY=your_pinecone_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
-HF_MODEL_NAME=yogvidwankhede/healthmate-medical-embeddings
+HF_MODEL_NAME=yogvidwankhede/healthmate-minilm-l6-v2-medical-3fold
 
 # Optional for local development
 PYTHON_VERSION=3.9.18
@@ -438,7 +463,7 @@ Start Command: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 1 --t
 ```
 PINECONE_API_KEY = pc_xxxxx...
 OPENAI_API_KEY = sk-xxxxx...
-HF_MODEL_NAME = yogvidwankhede/healthmate-medical-embeddings
+HF_MODEL_NAME = yogvidwankhede/healthmate-minilm-l6-v2-medical-3fold
 PYTHON_VERSION = 3.9.18
 WEB_CONCURRENCY = 1
 TOKENIZERS_PARALLELISM = false
