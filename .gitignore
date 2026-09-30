@@ -33,3 +33,6 @@ LLM/
 *.bin
 *.pt
 *.pth
+# Extracted text of a copyrighted book; never commit
+pdf_cache.pkl
+*.pkl
