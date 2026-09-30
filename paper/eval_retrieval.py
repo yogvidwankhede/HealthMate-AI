@@ -15,7 +15,9 @@ MODELS = {  # name: (hf id, query prefix, passage prefix)
     "e5-small": ("intfloat/e5-small-v2", "query: ", "passage: "),
     "hm-3fold": ("yogvidwankhede/healthmate-minilm-l6-v2-medical-3fold", "", ""),
     "hm-best2": ("yogvidwankhede/healthmate-minilm-l6-v2-medical-best2", "", ""),
+    "gte-small": ("thenlper/gte-small", "", ""),
 }
+MEDCPT = ("ncbi/MedCPT-Query-Encoder", "ncbi/MedCPT-Article-Encoder")  # public-domain licence (HF card)
 SEED = 13
 
 
@@ -62,10 +64,40 @@ def rank_bm25(corpus_ids, corpus_txt, qtxt):
     return [[corpus_ids[i] for i in np.argsort(-bm.get_scores(tok(q)))[:100]] for q in qtxt]
 
 
+def rank_medcpt(corpus_ids, corpus_txt, qtxt):
+    import torch
+    from transformers import AutoModel, AutoTokenizer
+    dev = "mps" if torch.backends.mps.is_available() else "cpu"
+
+    def enc(hf, texts, maxlen, bs=64):
+        tok, mod = AutoTokenizer.from_pretrained(hf), AutoModel.from_pretrained(hf).to(dev).eval()
+        out = []
+        with torch.no_grad():
+            for i in range(0, len(texts), bs):
+                b = tok(texts[i:i + bs], truncation=True, padding=True, max_length=maxlen, return_tensors="pt").to(dev)
+                out.append(mod(**b).last_hidden_state[:, 0].float().cpu().numpy())
+        return np.concatenate(out)
+    Q, D = enc(MEDCPT[0], qtxt, 64), enc(MEDCPT[1], corpus_txt, 512)
+    S = Q @ D.T  # MedCPT is scored by inner product
+    return [[corpus_ids[i] for i in np.argsort(-s)[:100]] for s in S], 512
+
+
+def rrf(lists, k=60):
+    """Reciprocal rank fusion of ranked lists (Cormack et al. 2009), constant k=60."""
+    sc = {}
+    for lst in lists:
+        for r, d in enumerate(lst):
+            sc[d] = sc.get(d, 0) + 1 / (k + r + 1)
+    return sorted(sc, key=sc.get, reverse=True)[:100]
+
+
 def rank_dense(name, corpus_ids, corpus_txt, qtxt):
     import torch
     from sentence_transformers import SentenceTransformer
-    hf, qp, pp = MODELS[name]
+    if name.startswith("path:"):  # local fine-tuned checkpoint, no prefixes
+        hf, qp, pp = name[5:], "", ""
+    else:
+        hf, qp, pp = MODELS[name]
     dev = "mps" if torch.backends.mps.is_available() else "cpu"
     m = SentenceTransformer(hf, device=dev)
     D = m.encode([pp + t for t in corpus_txt], batch_size=64, normalize_embeddings=True,
@@ -78,7 +110,8 @@ def rank_dense(name, corpus_ids, corpus_txt, qtxt):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
-    ap.add_argument("--model", required=True, choices=list(MODELS) + ["bm25"])
+    ap.add_argument("--model", required=True, help="bm25 | medcpt | a key of MODELS | path:<dir> | hybrid:<model> (BM25+dense RRF)")
+    ap.add_argument("--tag", default=None, help="name used in the output filename")
     ap.add_argument("--root", default="data/beir")
     ap.add_argument("--out", default="paper/results")
     a = ap.parse_args()
@@ -86,23 +119,30 @@ def main():
     ids, txt = list(corpus), list(corpus.values())
     qids, qtxt = list(queries), list(queries.values())
     t0, msl = time.time(), None
-    if a.model == "bm25":
-        ranked = rank_bm25(ids, txt, qtxt)
+    def run(m):
+        if m == "bm25":
+            return rank_bm25(ids, txt, qtxt), None
+        if m == "medcpt":
+            return rank_medcpt(ids, txt, qtxt)
+        return rank_dense(m, ids, txt, qtxt)
+    if a.model.startswith("hybrid:"):
+        (b, _), (d, msl) = run("bm25"), run(a.model[7:])
+        ranked = [rrf([x, y]) for x, y in zip(b, d)]
     else:
-        ranked, msl = rank_dense(a.model, ids, txt, qtxt)
+        ranked, msl = run(a.model)
+    name = a.tag or a.model.replace(":", "-").replace("/", "_")
     pq = {q: per_query_metrics(r, qrels[q]) for q, r in zip(qids, ranked)}
     summary = {}
     for k in ["ndcg@10", "recall@10", "recall@100", "mrr@10"]:
         v = [pq[q][k] for q in qids]
         summary[k] = {"mean": float(np.mean(v)), "ci95": bootstrap_ci(v)}
     os.makedirs(a.out, exist_ok=True)
-    json.dump({"dataset": a.dataset, "model": a.model,
-               "hf_id": MODELS.get(a.model, ("bm25",))[0], "n_queries": len(qids),
+    json.dump({"dataset": a.dataset, "model": name, "spec": a.model, "n_queries": len(qids),
                "n_docs": len(ids), "max_seq_length": msl, "seconds": round(time.time() - t0, 1),
                "env": {"python": platform.python_version(), "machine": platform.machine()},
                "summary": summary, "per_query": pq},
-              open(os.path.join(a.out, f"{a.dataset}__{a.model}.json"), "w"))
-    print(a.dataset, a.model, {k: round(v["mean"], 4) for k, v in summary.items()})
+              open(os.path.join(a.out, f"{a.dataset}__{name}.json"), "w"))
+    print(a.dataset, name, {k: round(v["mean"], 4) for k, v in summary.items()})
 
 
 if __name__ == "__main__":

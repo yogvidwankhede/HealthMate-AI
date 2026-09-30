@@ -1,0 +1,2 @@
+trec-covid bm25 {'ndcg@10': 0.5776, 'recall@10': 0.0153, 'recall@100': 0.0936, 'mrr@10': 0.758}
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 19353.70it/s]

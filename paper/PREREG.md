@@ -55,4 +55,24 @@ clinician raters and IRB status known.
 None yet.
 
 ## Amendments
-(none)
+Amendment 1 (2026-09-30, before any fine-tuned model of ours was trained or evaluated;
+the zero-shot baseline and old-checkpoint runs had already been done):
+- MedQuAD is used as a question -> answer retrieval set built by paper/prep_medquad.py.
+  Sources: CancerGov, GARD, GHR, NIDDK, NINDS, SeniorHealth, NHLBI, CDC.
+  Excluded: MedlinePlus Health Topics (it overlaps the MedlinePlus training corpus) and the
+  three sub-collections whose answers were removed for copyright.
+- Near-duplicate check: each MedQuAD answer is compared with every training chunk by TF-IDF
+  cosine; counts above 0.8 are reported, and results are also reported with those answers'
+  queries removed.
+- Fine-tuning data: MedlinePlus English health topics (2026-09-30 XML). Each full summary is
+  cut into chunks of at most 120 words on sentence boundaries. Pairs: (topic title, chunk)
+  and (meta description, chunk). Loss: MultipleNegativesRankingLoss with no duplicate anchors
+  per batch. Split by topic: 90% train / 10% validation, fixed hash of the topic id.
+- Model selection on validation only (validation = title/meta-description -> own chunks, MRR@10):
+  lr in {1e-5, 2e-5, 5e-5}, epochs in {1, 2, 3}. Final models: 3 seeds (13, 42, 2024) plus
+  a uniform weight average of the 3 seed models. Benchmarks are never used for selection.
+- Correction: the MedCPT licence is "public-domain" (licence_name on the HF card), not plain
+  "other". BioLORD-2023 needs UMLS/SNOMED licensing by the user, so it is excluded unless the
+  author confirms a UMLS licence.
+- Hybrid = reciprocal rank fusion (k=60) of BM25 and one dense model over their top-100 lists.
+- BM25 uses rank-bm25 (Okapi, default k1/b), not Anserini; absolute BM25 numbers differ slightly from BEIR's.
