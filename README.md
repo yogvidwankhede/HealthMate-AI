@@ -615,8 +615,8 @@ If you use this work in your research, please cite:
 ```bibtex
 @misc{wankhede2024healthmate,
   title={HealthMate-AI: A Retrieval-Augmented Generation Medical Chatbot with Fine-Tuned Embeddings},
-  author={Wankhede, Yogvid and Nan, Leonardo},
-  year={2024},
+  author={Wankhede, Yogvid},
+  year={2025},
   institution={Washington University in St. Louis},
   course={ESE 5971 - Practicum in Data Analytics and Statistics}
 }
