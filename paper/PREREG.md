@@ -99,3 +99,10 @@ Small local RAG study, answer correctness only. Hardware: M4 Max, 38.6 GB; no cl
   because none has been calibrated against human labels. Any such claim is out of scope.
 - Known weakness: the corpus is unlikely to contain the answer to a PubMedQA question, so a null result
   is expected and would not show that retrieval helps or hurts in a better-matched setting.
+
+Amendment 4 (2026-10-01, after the first run, base generator with no retrieval, showed 92% 'maybe' predictions
+and accuracy 0.156; that run was discarded and re-run with scores saved):
+- The primary analysis stays as preregistered (argmax over yes/no/maybe).
+- Secondary analysis, added after seeing this collapse and therefore exploratory: yes-vs-no accuracy on the
+  questions whose label is yes or no, choosing the higher of the 'yes' and 'no' scores. It removes the
+  generator's tendency to hedge from the comparison.

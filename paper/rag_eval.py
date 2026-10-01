@@ -39,15 +39,16 @@ def prompt(q, c):
     return tok.apply_chat_template([{"role": "user", "content": body}], tokenize=False, add_generation_prompt=True) + " Answer:"
 
 
-preds, t0 = [], time.time()
+preds, scores, t0 = [], [], time.time()
 for i in range(0, len(Q), 4):
     b = tok([prompt(q["question"], c) for q, c in zip(Q[i:i + 4], ctx[i:i + 4])], return_tensors="pt", padding=True, add_special_tokens=False).to(dev)
     with torch.no_grad(): lg = model(**b).logits[:, -1, :].float().cpu()
-    preds += [["yes", "no", "maybe"][int(np.argmax(l[cand].numpy()))] for l in lg]
+    sc = [l[cand].numpy().tolist() for l in lg]; scores += sc
+    preds += [["yes", "no", "maybe"][int(np.argmax(x))] for x in sc]
     if i % 100 == 0: print(a.gen, a.ret, i, round(time.time() - t0), flush=True)
 acc = float(np.mean([p == q["label"] for p, q in zip(preds, Q)]))
 os.makedirs("paper/results/rag", exist_ok=True)
 json.dump({"gen": a.gen, "ret": a.ret, "n": len(Q), "accuracy": acc, "seconds": round(time.time() - t0),
-           "ids": [q["id"] for q in Q], "labels": [q["label"] for q in Q], "preds": preds},
+           "ids": [q["id"] for q in Q], "labels": [q["label"] for q in Q], "preds": preds, "scores": scores},
           open(f"paper/results/rag/{a.gen}__{a.ret}.json", "w"))
 print(a.gen, a.ret, "accuracy", acc)
