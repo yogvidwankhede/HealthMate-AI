@@ -1,0 +1,10 @@
+{
+ "lr": 2e-05,
+ "epochs": 2,
+ "seed": 13,
+ "n_train_topics": 919,
+ "n_val_topics": 93,
+ "n_pairs": 6666,
+ "val_mrr@10": 0.9856630824372759,
+ "base_val_mrr@10": null
+}
