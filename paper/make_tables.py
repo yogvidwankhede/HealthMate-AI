@@ -61,3 +61,12 @@ for ds, dn in DS:
     L.append(r"\midrule")
 L[-1] = r"\bottomrule"; L.append(r"\end{tabular}")
 open("paper/tex/tab_paired.tex", "w").write("\n".join(L) + "\n")
+
+rows = [l for l in open("paper/results/rag_summary.md").read().splitlines() if l.startswith("| base |")]
+L = [r"\begin{tabular}{lcc}", r"\toprule", r"Retrieval & Accuracy [95\% CI] & $\Delta$ vs. none \\", r"\midrule"]
+nm = {"none": "None", "base": "Base MiniLM", "ours": "Ours (averaged)", "hm3fold": "Published 3-fold"}
+for r in sorted(rows, key=lambda l: ["none", "base", "ours", "hm3fold"].index(l.split("|")[2].strip())):
+    c = [x.strip() for x in r.split("|")[1:-1]]
+    L.append(f"{nm[c[1]]} & {c[2]} & {c[4] or '--'} \\\\")
+L += [r"\bottomrule", r"\end{tabular}"]
+open("paper/tex/tab_rag.tex", "w").write("\n".join(L) + "\n")

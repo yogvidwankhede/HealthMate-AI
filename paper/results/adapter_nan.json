@@ -1,0 +1,17 @@
+{
+ "seed42_root": {
+  "tensors": 448,
+  "tensors_with_nan": 448,
+  "tensors_with_inf": 0
+ },
+ "adapter_seed_123": {
+  "tensors": 448,
+  "tensors_with_nan": 448,
+  "tensors_with_inf": 0
+ },
+ "adapter_seed_999": {
+  "tensors": 448,
+  "tensors_with_nan": 448,
+  "tensors_with_inf": 0
+ }
+}

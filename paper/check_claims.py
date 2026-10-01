@@ -28,6 +28,14 @@ checks = [
  ("val: base 0.997", abs(json.load(open(f"{R}/train/grid_lr1e-5_e1.json"))["base_val_mrr@10"] - 0.997) < 5e-4),
  ("neardup 4 answers > 0.8", json.load(open(f"{R}/neardup.json"))["n_answers_over_0.8"] == 4),
 ]
+AN = json.load(open(f"{R}/adapter_nan.json"))
+checks.append(("all 448 tensors NaN in all 3 adapters", all(v["tensors"] == 448 and v["tensors_with_nan"] == 448 for v in AN.values()) and len(AN) == 3))
+RG = {k: json.load(open(f"{R}/rag/{k}.json")) for k in ["base__none", "base__base", "base__ours", "base__hm3fold"]}
+acc = {k: v["accuracy"] for k, v in RG.items()}
+checks.append(("RAG acc 0.156/0.162/0.160/0.150", [round(acc[k], 3) for k in ["base__none", "base__base", "base__ours", "base__hm3fold"]] == [0.156, 0.162, 0.16, 0.15]))
+checks.append(("max |diff vs none| <= 0.006", max(abs(acc[k] - acc["base__none"]) for k in acc) <= 0.0061))
+checks.append(("maybe share 88-93%", all(0.88 <= sum(p == "maybe" for p in v["preds"]) / 500 <= 0.93 for v in RG.values())))
+checks.append(("majority yes 0.552", round(sum(l == "yes" for l in RG["base__none"]["labels"]) / 500, 3) == 0.552))
 bad = [n for n, ok in checks if not ok]
 for n, ok in checks: print("OK  " if ok else "FAIL", n)
 sys.exit(1 if bad else 0)

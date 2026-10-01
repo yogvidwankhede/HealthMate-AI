@@ -1,6 +1,6 @@
 # Claims ledger (results commit 5478083)
 
-Automated: `python paper/check_claims.py` asserts every number quoted in the paper prose against the results files (20 checks, all pass at 5478083).
+Automated: `python paper/check_claims.py` asserts every number quoted in the paper prose against the results files (25 checks, all pass at 5478083).
 
 | Claim in paper | Results file | Script |
 |---|---|---|
@@ -14,6 +14,10 @@ Automated: `python paper/check_claims.py` asserts every number quoted in the pap
 | Validation grid; best = lr 5e-5, 3 epochs; base val MRR 0.997 | results/train/*.json | run_grid.sh, train_finetune.py |
 | Dataset sizes (queries, docs) | per-system JSONs (n_queries, n_docs) | eval_retrieval.py |
 | 919/93 topics, 6,666 pairs | results/train/*.json | train_finetune.py |
+
+| All 448 tensors of each published LoRA adapter are NaN | results/adapter_nan.json | check_adapters.py |
+| RAG on PubMedQA: base Mistral, accuracy 0.150-0.162 in all retrieval conditions; no paired difference excludes zero | results/rag/*.json, rag_summary.md | rag_eval.py, rag_analyze.py |
+| LoRA runs invalid (NaN logits), excluded | results/rag/lora*.json, rag_summary.md | rag_analyze.py |
 
 Non-empirical statements and their sources:
 - Training code, notebooks, question CSVs are absent from the repo: file listing and git history of yogvidwankhede/HealthMate-AI at 436343f (pre-rewrite) and 6b12e35.

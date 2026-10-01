@@ -1,5 +1,6 @@
 # What the human author must do (nothing here was done on your behalf)
 
+0. The published LoRA adapters are all-NaN (verified). Decide whether to delete or replace them on Hugging Face; the card now says they are unusable.
 1. Decide authorship and affiliation. A course report and the README citation list a co-author;
    you said it is only you. The README citation is unchanged until you confirm.
 2. Check WashU/course rules on releasing coursework-derived code and the paper (IP, course policy).
