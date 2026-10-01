@@ -1,2 +1,9 @@
 trec-covid bm25 {'ndcg@10': 0.5776, 'recall@10': 0.0153, 'recall@100': 0.0936, 'mrr@10': 0.758}
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 19353.70it/s]
+trec-covid minilm-base {'ndcg@10': 0.4722, 'recall@10': 0.0128, 'recall@100': 0.0855, 'mrr@10': 0.7244}
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 9023.81it/s]
+trec-covid bge-small {'ndcg@10': 0.7565, 'recall@10': 0.0207, 'recall@100': 0.1333, 'mrr@10': 0.9307}
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 8760.79it/s]
+trec-covid e5-small {'ndcg@10': 0.7437, 'recall@10': 0.0201, 'recall@100': 0.1355, 'mrr@10': 0.8957}
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 8560.65it/s]
+trec-covid hm-3fold {'ndcg@10': 0.2194, 'recall@10': 0.0055, 'recall@100': 0.038, 'mrr@10': 0.3741}

@@ -76,3 +76,9 @@ the zero-shot baseline and old-checkpoint runs had already been done):
   author confirms a UMLS licence.
 - Hybrid = reciprocal rank fusion (k=60) of BM25 and one dense model over their top-100 lists.
 - BM25 uses rank-bm25 (Okapi, default k1/b), not Anserini; absolute BM25 numbers differ slightly from BEIR's.
+
+Amendment 2 (2026-09-30, after the validation grid, before any benchmark run on our models):
+- Selection rule applied as preregistered (highest validation MRR@10, seed 13): lr 5e-5, 3 epochs
+  (val MRR 1.000). This is the edge of the grid; the grid was not extended. Base MiniLM scores
+  0.997 on this validation task, so the validation task is saturated and weakly informative; this is
+  reported as a limitation. Final models: seeds 13, 42, 2024 and their uniform weight average.
