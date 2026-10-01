@@ -82,3 +82,20 @@ Amendment 2 (2026-09-30, after the validation grid, before any benchmark run on 
   (val MRR 1.000). This is the edge of the grid; the grid was not extended. Base MiniLM scores
   0.997 on this validation task, so the validation task is saturated and weakly informative; this is
   reported as a limitation. Final models: seeds 13, 42, 2024 and their uniform weight average.
+
+Amendment 3 (2026-10-01, before any generation run; retrieval results were already known):
+Small local RAG study, answer correctness only. Hardware: M4 Max, 38.6 GB; no cloud spend.
+- Task: PubMedQA expert-labelled set (pqa_labeled, MIT licence on its HF card), 500 questions drawn
+  with seed 13. Labels yes/no/maybe. The question is given WITHOUT the abstract; retrieved MedlinePlus
+  chunks are the only optional context, so RAG can only help via general consumer-health text.
+- Prediction by next-token scoring (no sampling): the prompt ends with 'Answer (yes, no or maybe):' and
+  the label is the highest-scoring of the three first tokens. Metrics: accuracy and macro-F1, bootstrap
+  95% CIs over questions, paired bootstrap vs the no-retrieval condition of the same generator.
+- Retrieval corpus: all MedlinePlus English topic chunks (120 words), top-3 by cosine, from one of:
+  base MiniLM, our seed-averaged model, published HealthMate 3-fold. Condition 'none' uses no context.
+- Generators: Mistral-7B-Instruct-v0.2 (fp16) and the three published LoRA adapters (seeds 42, 123, 999).
+  Full grid (4 retrievers x base and adapter-42) plus adapters 123 and 999 with the none and base-MiniLM retrievers.
+- NOT measured: faithfulness, hallucination, answer fluency, safety/refusal behaviour. No LLM judge is used,
+  because none has been calibrated against human labels. Any such claim is out of scope.
+- Known weakness: the corpus is unlikely to contain the answer to a PubMedQA question, so a null result
+  is expected and would not show that retrieval helps or hurts in a better-matched setting.
