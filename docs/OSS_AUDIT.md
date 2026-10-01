@@ -51,3 +51,11 @@ numbers are untraceable; 16 listed files are missing; dependency versions in the
 
 ## Out of scope, noted only
 Account-wide contribution history; the Apara-App org; other repositories.
+
+## 6. OpenSSF Scorecard (run 2026-10-01 on `main`, scorecard from Homebrew)
+Aggregate **2.0 / 10**. Per check: Binary-Artifacts 10, Contributors 10, License 10, Maintained 1, and 0 for
+Branch-Protection, CII-Best-Practices, Code-Review, Dependency-Update-Tool, Fuzzing, SAST, Security-Policy, Vulnerabilities.
+Expected to improve after merging these PRs: Security-Policy (SECURITY.md) and Dependency-Update-Tool (Dependabot).
+Needs you: Branch-Protection (repo settings), Code-Review (a reviewed PR; do not self-approve for show),
+CII Best Practices (apply for the badge honestly), SAST (add CodeQL if wanted). Vulnerabilities likely come from old pinned
+dependencies; run `pip-audit` before bumping. No Scorecard badge is added because the score is not worth advertising.
