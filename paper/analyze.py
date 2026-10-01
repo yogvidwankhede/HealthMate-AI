@@ -1,7 +1,7 @@
 """Aggregate per-query results into tables (paper/results/summary.md) and a figure.
 
 Paired bootstrap (10,000 resamples over queries, seed 13) of nDCG@10 differences
-vs. base MiniLM and vs. the best other system per dataset; Holm correction over
+vs. base MiniLM, and our seed-averaged model vs. the best external baseline per dataset (chosen post hoc, so exploratory); Holm correction over
 all comparisons reported. Two-sided p = 2*min(P(diff<=0), P(diff>=0)).
 """
 import glob, json, os, sys
@@ -36,13 +36,14 @@ for ds, models in sorted(data.items()):
         s = j["summary"]; c = s["ndcg@10"]["ci95"]
         lines.append(f"| {m} | {s['ndcg@10']['mean']:.3f} [{c[0]:.3f}, {c[1]:.3f}] | {s['recall@10']['mean']:.3f} | "
                      f"{s['recall@100']['mean']:.3f} | {s['mrr@10']['mean']:.3f} |")
-    ref = "minilm-base"
+    ref, ours = "minilm-base", "path-models_ft_avg"
     if ref in models:
-        best = max((m for m in models if m != ref), key=lambda m: models[m]["summary"]["ndcg@10"]["mean"])
         for m in models:
             if m != ref: comps.append((ds, m, ref) + paired(models[m], models[ref]))
-        for m in models:
-            if m not in (best,): comps.append((ds, best, m) + paired(models[best], models[m]))
+        base = [m for m in models if m in ("bge-small", "e5-small", "gte-small", "medcpt", "bm25")]
+        if ours in models and base:  # best external baseline is chosen post hoc, per dataset
+            best = max(base, key=lambda m: models[m]["summary"]["ndcg@10"]["mean"])
+            comps.append((ds, ours, best) + paired(models[ours], models[best]))
 if comps:
     adj = holm([c[5] for c in comps])
     lines += ["\n## Paired comparisons (nDCG@10 difference, Holm-adjusted over all rows)\n",
@@ -53,5 +54,6 @@ if comps:
         if k in seen: continue
         seen.add(k)
         lines.append(f"| {c[0]} | {c[1]} | {c[2]} | {c[3]:+.3f} | [{c[4][0]:+.3f}, {c[4][1]:+.3f}] | {c[5]:.4f} | {a:.4f} |")
+json.dump([{"dataset": c[0], "a": c[1], "b": c[2], "diff": c[3], "ci": c[4], "p_raw": c[5], "p_holm": float(a)} for c, a in zip(comps, adj)] if comps else [], open(f"{R}/paired.json", "w"), indent=1)
 open(f"{R}/summary.md", "w").write("\n".join(lines) + "\n")
 print("\n".join(lines))
