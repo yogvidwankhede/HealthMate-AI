@@ -10,7 +10,7 @@
 > below (Spearman 0.8039, +18.31%, 93.3% top-3) cannot currently be reproduced from it. A
 > course report gives a different ensemble figure (0.7552), and independent zero-shot tests on
 > BEIR SciFact, NFCorpus and TREC-COVID show the published HealthMate checkpoints scoring far
-> below their base model. See `paper/` on the research branch. The Gale Encyclopedia text is
+> below their base model, and every tensor in the three published LoRA adapters is NaN (they cannot be used). See `paper/` on the research branch. The Gale Encyclopedia text is
 > copyrighted and is not distributed. The numbers below are historical claims, not verified results.
 
 ---
