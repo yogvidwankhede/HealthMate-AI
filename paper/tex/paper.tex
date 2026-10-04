@@ -46,6 +46,10 @@ The project's repository and model cards describe a 3-fold cross-validated fine-
 
 \paragraph{Metrics and statistics.} nDCG@10 (primary), Recall@10, Recall@100 and MRR@10, with 95\% percentile bootstrap intervals over queries (10,000 resamples). Paired bootstrap differences against the base model, with Holm correction across all comparisons reported. Which external baseline to compare our model against was chosen after seeing results, so that comparison is exploratory. Nothing was tuned on any benchmark. The preregistration and its two dated amendments are in the repository; the zero-shot baseline runs and the runs of the published checkpoints were performed before the final protocol was frozen, which we state because it limits what ``preregistered'' covers.
 
+\paragraph{Compute and software.} All retrieval and training runs used one Apple M4 Max laptop (38.6 GB unified memory, MPS backend, Python 3.12.13) with torch 2.14.1, sentence-transformers 6.1.0, transformers 5.18.0 and rank-bm25 0.2.2; the generator study used Mistral-7B-Instruct-v0.2 in float16. Each fine-tuning run took 2 to 4 minutes; zero-shot evaluation of one system took from seconds (SciFact, NFCorpus) to 38 minutes (the slowest system on TREC-COVID). Training used the sentence-transformers trainer with MultipleNegativesRankingLoss, batch size 32, 10\% linear warm-up, the library's default AdamW settings, a maximum sequence length of 256 tokens. Retrieval results are deterministic given the model; the training seeds are 13, 42 and 2024, and we report each seed and their average.
+
+\paragraph{Data checks.} All benchmark and training text is public health or scientific text; we did not find or look for personal data, and we did not exhaustively inspect it for offensive content. We use each resource for retrieval evaluation or fine-tuning, consistent with its public release; the HealthMate checkpoints were released for medical retrieval and we test them on that use.
+
 \section{Results}
 Table~\ref{tab:ndcg} and Figure~\ref{fig:ndcg} give nDCG@10 for every system.
 
