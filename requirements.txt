@@ -10,7 +10,7 @@ langchain-openai==0.3.24
 pinecone==7.3.0
 
 # OpenAI
-openai==1.106.1
+openai==3.22.1
 
 # AI/ML dependencies
 torch==2.5.1
