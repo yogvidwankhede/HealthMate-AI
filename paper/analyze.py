@@ -10,7 +10,7 @@ R = "paper/results"
 data = {}
 for f in glob.glob(f"{R}/*__*.json"):
     j = json.load(open(f))
-    if j["model"].endswith("-seq512"): continue
+    if j["model"].endswith("-seq512") or j["model"].startswith("dev__") or j["model"].startswith("v2"): continue
     data.setdefault(j["dataset"], {})[j["model"]] = j
 
 

@@ -126,3 +126,14 @@ follow-up study, not a fresh preregistration): a stronger re-training baseline, 
 - Final models: the selected setting with seeds 13, 42, 2024 and their uniform weight average.
 - Primary test: paired bootstrap of the averaged model against base MiniLM on each test set; Holm over these four comparisons.
 - If no recipe beats base, that is the result.
+
+Amendment 7 (2026-10-04, written before running, replaces the retrieval-corpus design of amendment 3 after the review found the
+MedlinePlus corpus cannot answer PubMedQA questions; amendment 3's results stay in the repo and are reported as the first design):
+- Corpus: the abstracts (joined context sections, excluding the long answer) of all 1,000 expert-labelled PubMedQA items, so a gold
+  abstract exists for every question. Questions: the same 500 drawn with seed 13, restricted to those labelled yes or no (442).
+- Retrievers: base MiniLM, published 3-fold, our averaged model (recipe of amendment 1), BGE-small (strong reference), and the selected
+  v2 model from amendment 6 once chosen. Top-1 abstract is the context. Conditions also include no context and the oracle (gold abstract).
+- Generator: base Mistral-7B-Instruct-v0.2 only (published adapters are NaN). Prompt asks for yes or no; the label is the higher of the
+  'yes' and 'no' first-token scores. Metrics: accuracy with bootstrap 95% CI, retrieval hit rate (gold abstract at rank 1), paired
+  difference vs no context. The LoRA comparison is not possible and is reported as such.
+- Interpretation rule: if oracle context does not beat no-context accuracy, retrieval cannot help and the test is uninformative.
