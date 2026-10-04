@@ -15,3 +15,8 @@ for k in order:
     L.append(f"| {k} | {'' if h is None else f'{h:.3f}'} | {c.mean():.3f} [{ci[0]:.3f}, {ci[1]:.3f}] | {d} |")
 L.append(f"\nn = {R['none']['n']} yes/no questions; always-yes accuracy {np.mean([l == 'yes' for l in R['none']['labels']]):.3f}")
 open("paper/results/rag2_summary.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))
+
+# exploratory, unadjusted: published 3-fold vs base retriever
+def acc(k): return np.array([p == l for p, l in zip(R[k]["preds"], R[k]["labels"])], float)
+dd = acc("hm3fold") - acc("base"); mm = dd[np.random.default_rng(13).integers(0, len(dd), (10000, len(dd)))].mean(1)
+json.dump({"hm3fold_minus_base_retriever": {"diff": float(dd.mean()), "ci": np.percentile(mm, [2.5, 97.5]).tolist()}}, open("paper/results/rag2_paired.json", "w"), indent=1)

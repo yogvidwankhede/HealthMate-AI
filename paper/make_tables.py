@@ -70,3 +70,19 @@ for r in sorted(rows, key=lambda l: ["none", "base", "ours", "hm3fold"].index(l.
     L.append(f"{nm[c[1]]} & {c[2]} & {c[4] or '--'} \\\\")
 L += [r"\bottomrule", r"\end{tabular}"]
 open("paper/tex/tab_rag.tex", "w").write("\n".join(L) + "\n")
+
+V = json.load(open(f"{R}/v2_summary.json"))
+L = [r"\begin{tabular}{lcccc}", r"\toprule", r"System & SciFact & NFCorpus & TREC-COVID & MedQuAD (test) \\", r"\midrule"]
+for k in ["base", "recipe 1 (earlier), averaged", "recipe v2, averaged", "BGE-small"]:
+    nm = {"base": "Base MiniLM", "recipe 1 (earlier), averaged": "First recipe (avg.)", "recipe v2, averaged": "Stronger recipe R2 (avg.)", "BGE-small": "BGE-small"}[k]
+    L.append(nm + " & " + " & ".join(f"{V[d]['ndcg@10'][k][0]:.3f}" for d in ["scifact", "nfcorpus", "trec-covid", "medquad"]) + r" \\")
+L += [r"\bottomrule", r"\end{tabular}"]
+open("paper/tex/tab_v2.tex", "w").write("\n".join(L) + "\n")
+rows = [l for l in open("paper/results/rag2_summary.md").read().splitlines() if l.startswith("| ") and "context" not in l and "---" not in l]
+NM = {"none": "None", "oracle": "Gold abstract", "base": "Base MiniLM", "ours": "First recipe (avg.)", "hm3fold": "Published 3-fold", "bge": "BGE-small", "path:models/v2final_avg": "Stronger recipe R2 (avg.)"}
+L = [r"\begin{tabular}{lccc}", r"\toprule", r"Context & Hit@1 & Accuracy [95\% CI] & $\Delta$ vs. none \\", r"\midrule"]
+for r in rows:
+    c = [x.strip() for x in r.split("|")[1:-1]]
+    L.append(f"{NM[c[0]]} & {c[1] or '--'} & {c[2]} & {c[3] or '--'} \\\\")
+L += [r"\bottomrule", r"\end{tabular}"]
+open("paper/tex/tab_rag2.tex", "w").write("\n".join(L) + "\n")

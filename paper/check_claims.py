@@ -39,6 +39,22 @@ checks.append(("majority yes 0.552", round(sum(l == "yes" for l in RG["base__non
 S5 = json.load(open(f"{R}/seq512.json"))
 checks.append(("seq512 MedQuAD 0.591/0.529/0.164", [round(S5["ndcg@10"][k], 3) for k in ["base", "ours", "published"]] == [0.591, 0.529, 0.164]))
 checks.append(("seq512 ours-base -0.063 and CI excludes 0", round(S5["ours_minus_base"]["diff"], 3) == -0.063 and S5["ours_minus_base"]["ci"][1] < 0))
+V2 = json.load(open(f"{R}/v2_summary.json")); R2 = {k: json.load(open(f"{R}/rag2/{k}.json")) for k in ["none", "oracle", "base", "ours", "hm3fold", "bge", "path-models_v2final_avg"]}
+r2 = lambda k: round(R2[k]["accuracy"], 3)
+d2 = lambda d, k: round(V2[d][k]["diff"], 3)
+checks += [
+ ("v2 minus base: -0.006/-0.005/-0.017/-0.023", [d2(d, "recipe v2, averaged minus base") for d in ["scifact", "nfcorpus", "trec-covid", "medquad"]] == [-0.006, -0.005, -0.017, -0.023]),
+ ("v2 CIs include 0 on three BEIR sets; MedQuAD test Holm<0.001", all(V2[d]["recipe v2, averaged minus base"]["ci"][0] < 0 < V2[d]["recipe v2, averaged minus base"]["ci"][1] for d in ["scifact", "nfcorpus", "trec-covid"]) and V2["medquad"]["v2_holm_p"] < 0.001),
+ ("first recipe MedQuAD test -0.105", d2("medquad", "recipe 1 (earlier), averaged minus base") == -0.105),
+ ("TREC v2 0.455 vs BGE 0.756", round(V2["trec-covid"]["ndcg@10"]["recipe v2, averaged"][0], 3) == 0.455 and round(V2["trec-covid"]["ndcg@10"]["BGE-small"][0], 3) == 0.756),
+ ("MedQuAD test n=4599", V2["medquad"]["n_queries"] == 4599),
+ ("RAG2 accuracies none .631 oracle .803 base .799 ours .792 hm3 .738 bge .803 v2 .799", [r2(k) for k in ["none", "oracle", "base", "ours", "hm3fold", "bge", "path-models_v2final_avg"]] == [0.631, 0.803, 0.799, 0.792, 0.738, 0.803, 0.799]),
+ ("RAG2 hit@1 .604 .930 .966 .975 .991", [round(R2[k]["retrieval_hit@1"], 3) for k in ["hm3fold", "ours", "path-models_v2final_avg", "base", "bge"]] == [0.604, 0.93, 0.966, 0.975, 0.991]),
+ ("RAG2 n=442", R2["none"]["n"] == 442),
+ ("RAG2 hm3fold-base -0.061 [-0.090,-0.032]", (lambda x: round(x["diff"], 3) == -0.061 and [round(c, 3) for c in x["ci"]] == [-0.09, -0.032])(json.load(open(f"{R}/rag2_paired.json"))["hm3fold_minus_base_retriever"])),
+ ("dev grid: base 0.693, range 0.607-0.659", (lambda g: round(g["base"], 3) == 0.693 and round(min(g["grid"]), 3) == 0.607 and round(max(g["grid"]), 3) == 0.659)({"base": json.load(open(f"{R}/medquad__dev__minilm-base.json"))["summary"]["ndcg@10"]["mean"], "grid": [json.load(open(f))["summary"]["ndcg@10"]["mean"] for f in glob.glob(f"{R}/medquad__dev__v2_*.json")]})),
+ ("dev n queries 10,796", json.load(open(f"{R}/medquad__dev__minilm-base.json"))["n_queries"] == 10796),
+]
 bad = [n for n, ok in checks if not ok]
 for n, ok in checks: print("OK  " if ok else "FAIL", n)
 sys.exit(1 if bad else 0)

@@ -16,7 +16,10 @@ pytest paper/test_metrics.py
 ./paper/run_grid.sh           # validation-only grid (PREREG amendment 1)
 ./paper/run_all.sh            # trains seeds, evaluates all systems, writes paper/results/
 python paper/neardup.py && python paper/anisotropy.py
-python paper/analyze.py && python paper/make_tables.py
+./paper/run_v2_grid.sh && ./paper/run_v2_final.sh     # stronger-recipe follow-up (amendment 6) and RAG v2 (amendment 7)
+python paper/prep_pubmedqa.py && python paper/build_rag_index.py && ./paper/run_rag.sh   # first RAG design (amendment 3, superseded)
+python paper/analyze.py && python paper/analyze_v2.py && python paper/rag2_analyze.py && python paper/make_tables.py
+python paper/check_claims.py
 cd paper/tex && tectonic paper.tex
 ```
 
