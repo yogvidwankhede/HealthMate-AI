@@ -36,3 +36,7 @@ LLM/
 # Extracted text of a copyrighted book; never commit
 pdf_cache.pkl
 *.pkl
+.venv/
+paper/results/*.tmp
+models/
+runs/

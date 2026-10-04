@@ -1,0 +1,107 @@
+\documentclass[11pt]{article}
+\usepackage[review]{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+\title{Does Self-Supervised Domain Fine-Tuning Help a Small Medical Retriever?\\
+An Audit of a Published Encoder and a Preregistered Re-Training}
+
+\author{Anonymous submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A small public project released sentence encoders fine-tuned from all-MiniLM-L6-v2 for a medical question-answering chatbot and reported a large gain on an internal similarity task. We could not reproduce that figure because the training code and data splits are missing, so we test the released checkpoints directly on four external retrieval benchmarks (SciFact, NFCorpus, TREC-COVID, and a MedQuAD question-to-answer task) against base, open general-purpose, and biomedical baselines. The released checkpoints fall far below their own base model on all four sets. A diagnostic shows their embedding space is strongly compressed. We then re-train under a preregistered protocol on open MedlinePlus text with document-level splits. The re-trained models have lower point estimates than the base model on every benchmark, by a smaller margin and without compression; the difference is statistically clear on three of the four and not on TREC-COVID. We conclude that, in this setting, self-supervised in-domain fine-tuning on a small corpus did not help retrieval, and that an in-domain similarity score is not evidence of retrieval quality. A small local test of retrieval-augmented answering on PubMedQA finds no effect of any retriever on a 7B generator's accuracy, and we find that every weight tensor in the project's three published LoRA adapters is NaN, so those adapters cannot be evaluated. We do not evaluate faithfulness, hallucination, or clinical safety.
+\end{abstract}
+
+\section{Introduction}
+Domain-adapted embedding models are widely suggested as a cheap way to improve retrieval-augmented systems in specialised fields such as medicine. Public projects often report gains on a task built from the same corpus the model was trained on. Such a number says little about whether retrieval improves for new questions or new documents.
+
+We audit one such project, HealthMate-AI: a chatbot whose retriever is all-MiniLM-L6-v2 \citep{reimers2019sbert,wang2020minilm} fine-tuned on text from a copyrighted medical encyclopedia. Its documentation reports a Spearman correlation of 0.8039 against 0.6795 for the base model. Our contributions are modest and specific:
+\begin{itemize}
+\item We document that the headline figure cannot be traced to code, and that a course report from the same project gives a different figure for the same ensemble (Section~\ref{sec:audit}).
+\item We evaluate the released checkpoints zero-shot on four external retrieval sets against the systems in Table~\ref{tab:ndcg}, with bootstrap confidence intervals and Holm-corrected paired tests.
+\item We re-train the same base model under a protocol fixed before the final runs, using only openly licensed MedlinePlus text, and report the result even though it is negative.
+\end{itemize}
+We make no claim about answer faithfulness, hallucination, or clinical use.
+
+\section{Related Work}
+BEIR \citep{thakur2021beir} provides zero-shot retrieval evaluation across domains, including the biomedical sets we use \citep{wadden2020scifact,boteva2016nfcorpus,voorhees2020trec}. General-purpose small encoders such as BGE \citep{xiao2023cpack}, E5 \citep{wang2022e5} and GTE \citep{li2023gte} are strong zero-shot baselines. MedCPT \citep{jin2023medcpt} is a biomedical retriever trained on PubMed search logs. MedEIR \citep{selvadurai2025medeir} is one example of a specialised medical embedding model; we do not evaluate it. Fine-tuning can erode what a pre-trained network knew \citep{kirkpatrick2017ewc}; weight averaging of fine-tuned models is a known way to reduce variance \citep{wortsman2022soups}. Our setting differs from these works in being an audit of a specific released artefact, not a new method. We did not perform a systematic literature survey, and we make no priority claim.
+
+\section{The Audited Project and What Can Be Verified}\label{sec:audit}
+The project's repository and model cards describe a 3-fold cross-validated fine-tune whose fold checkpoints were weight-averaged, and a 2-fold variant. Training pairs, according to a course report from the same project, were retrieved text chunks paired with reference answers and filtered by lexical overlap. The repository does not contain the training or evaluation scripts, the question files, or the splits; we therefore cannot verify how the folds were built or whether test pairs overlap training pairs. The same course report states two different ensemble results (0.8039 and 0.7552) with different base scores. We treat neither as a finding. Whatever the correct value is, it measures agreement on an in-corpus similarity task, not retrieval on unseen documents.
+
+\section{Experimental Setup}
+\paragraph{Benchmarks.} SciFact (300 test queries, 5,183 documents), NFCorpus (323 queries, 3,633 documents), TREC-COVID (50 queries, 171,332 documents), all as distributed with BEIR. We also build a MedQuAD \citep{benabacha2019medquad} task: each question must retrieve its own answer from 14,798 unique answers (15,395 questions) drawn from eight NIH sources. We exclude the MedlinePlus Health Topics subset because it overlaps our training text, and the three subsets whose answers were withheld for copyright. Questions whose answer is a verbatim duplicate treat every copy as relevant.
+
+\paragraph{Systems.} BM25 (Okapi, \texttt{rank-bm25}); the base encoder; BGE-small, E5-small, GTE-small (used with their documented prefixes); MedCPT (query and article encoders); the two published HealthMate checkpoints; our re-trained models; and reciprocal-rank fusion (RRF, $k{=}60$) \citep{cormack2009rrf} of BM25 with BGE-small and with our model. BM25 is a standard baseline \citep{robertson2009bm25}.
+
+\paragraph{Re-training.} We fine-tune all-MiniLM-L6-v2 on the English MedlinePlus health topics (public-domain text, 1,012 topics; 919 train, 93 validation by a fixed hash of the topic id). Each topic summary is cut into chunks of at most 120 words; pairs are (title, chunk) and (meta description, chunk), 6,666 in total, with in-batch negatives \citep{henderson2017smartreply}. We chose learning rate and epochs on validation only (a grid of three by three at seed 13); the best setting was the edge of the grid (learning rate $5\times10^{-5}$, 3 epochs). The validation task is nearly saturated (the base model scores 0.997 MRR@10), so it is weakly informative. Final models use seeds 13, 42 and 2024 and a uniform weight average of the three. An answer-level near-duplicate check between MedQuAD answers and training chunks (TF-IDF cosine) found 4 of 14,798 answers above 0.8.
+
+\paragraph{Metrics and statistics.} nDCG@10 (primary), Recall@10, Recall@100 and MRR@10, with 95\% percentile bootstrap intervals over queries (10,000 resamples). Paired bootstrap differences against the base model, with Holm correction across all comparisons reported. Which external baseline to compare our model against was chosen after seeing results, so that comparison is exploratory. Nothing was tuned on any benchmark. The preregistration and its two dated amendments are in the repository; the zero-shot baseline runs and the runs of the published checkpoints were performed before the final protocol was frozen, which we state because it limits what ``preregistered'' covers.
+
+\section{Results}
+Table~\ref{tab:ndcg} and Figure~\ref{fig:ndcg} give nDCG@10 for every system.
+
+\begin{table*}[t]\centering\small
+\input{tab_ndcg}
+\caption{nDCG@10 [95\% bootstrap CI over queries]. Zero-shot; no system was tuned on these sets. ``Ours'' is trained on MedlinePlus only.}\label{tab:ndcg}
+\end{table*}
+
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{fig_ndcg.pdf}
+\caption{nDCG@10 with 95\% confidence intervals for selected systems.}\label{fig:ndcg}
+\end{figure*}
+
+\paragraph{The published checkpoints.} On every set they score far below the base model (for example SciFact 0.249 against 0.645; paired differences and Holm-adjusted $p$ are in Table~\ref{tab:paired}). A diagnostic on 2,000 SciFact passages points to a compressed embedding space: the effective rank (the exponential of the entropy of the normalised squared singular values of the centred embeddings) falls from 138.5 for the base model to 27.5 for the published 3-fold model (Table~\ref{tab:aniso}). Mean pairwise cosine rises from 0.129 to 0.517, but that number is not comparable across models (BGE-small has 0.628 and retrieves well), so we rely on effective rank. We did not establish the cause; pseudo-labelled in-corpus training is one candidate.
+
+\begin{table}[h]\centering\small
+\begin{tabular}{lcc}\toprule
+Model & mean pair cosine & effective rank\\\midrule
+Base MiniLM & 0.129 & 138.5\\
+Published 3-fold & 0.517 & 27.5\\
+Ours, averaged & 0.123 & 137.6\\
+BGE-small (reference) & 0.628 & 162.5\\\bottomrule\end{tabular}
+\caption{Geometry diagnostic on 2,000 random SciFact passages (\texttt{paper/results/anisotropy.json}).}\label{tab:aniso}
+\end{table}
+
+\paragraph{Our re-trained models.} They do not show compression, but their nDCG@10 is below the base model's on all four benchmarks: by 0.065 on SciFact, 0.023 on NFCorpus, 0.029 on TREC-COVID and 0.095 on MedQuAD. After Holm correction the differences are clear on SciFact, NFCorpus and MedQuAD; on TREC-COVID (50 queries) the interval for the difference includes zero ($-0.067$ to $+0.007$). Weight averaging over the three seeds changes little: the seed-to-seed range is much smaller than the gap to the base model. Fusing with BM25 raises our model's score on every set, but much of that comes from BM25 itself (BM25 alone scores 0.652 on SciFact against 0.656 for the fusion), and the fusion does not reach the strongest external baselines.
+
+\paragraph{External baselines.} BGE-small and GTE-small beat the base model on all four sets. E5-small beats it on TREC-COVID and MedQuAD but not clearly after correction on SciFact and NFCorpus. MedCPT beats it on SciFact and NFCorpus, is not clearly different on TREC-COVID, and is below it on MedQuAD (0.535 against 0.642). We did not investigate the MedQuAD result; its query encoder was trained for PubMed-style queries, and here the task is consumer questions against long answers truncated to the model's maximum length. BM25 is competitive on SciFact and TREC-COVID and weak on MedQuAD, where questions and answers share little vocabulary.
+
+\begin{table*}[t]\centering\small
+\input{tab_paired}
+\caption{Paired bootstrap differences in nDCG@10 against the base model (10,000 resamples), with Holm-adjusted $p$ over all comparisons in the analysis. The last row of each block compares our model with the best external baseline (chosen post hoc, so exploratory).}\label{tab:paired}
+\end{table*}
+
+\section{Generation: a small local study}\label{sec:rag}
+The project also released LoRA adapters for Mistral-7B-Instruct-v0.2. We checked every tensor in the three published adapter files (seeds 42, 123, 999): all 448 tensors in each file contain NaN (\texttt{paper/results/adapter\_nan.json}). Any run through these adapters returns NaN logits, so we exclude all adapter runs from the table and report no adapter comparison. The project's training logs, which show a mean training loss near 12, are consistent with a diverged run, but we did not establish the cause.
+
+We therefore evaluate only the base generator, on 500 questions drawn with seed 13 from the expert-labelled PubMedQA set, given the question without its abstract. Optional context is the top three MedlinePlus chunks from one of three retrievers (base MiniLM, our averaged model, the published 3-fold model) or none. The label is the highest-scoring of ``yes'', ``no'' and ``maybe'' as the first token after the prompt, with no sampling. Table~\ref{tab:rag} shows the result. The generator answers ``maybe'' for about 90\% of questions in every condition, so accuracy is about 0.16, well below the 0.552 obtained by always answering ``yes''. Retrieval changes accuracy by at most 0.006 in either direction, and every paired interval includes zero. An exploratory yes-versus-no score, defined after seeing this behaviour, is also close to the majority rate (about 0.62 against 0.624 for always ``yes''). The retrieval corpus is unlikely to contain answers to research-literature questions, so this null result does not show that retrieval helps or harms in a better-matched setting. We measured neither faithfulness nor hallucination.
+
+\begin{table}[t]\centering\small
+\input{tab_rag}
+\caption{PubMedQA (500 questions), base Mistral-7B-Instruct-v0.2. Accuracy [95\% CI]; difference vs. no retrieval with paired bootstrap CI. Always answering ``yes'' scores 0.552.}\label{tab:rag}
+\end{table}
+
+\section{Discussion}
+The practical reading is limited: for these small encoders and this much open text, self-supervised in-domain fine-tuning did not improve zero-shot retrieval over the base model, and the evidence that it harmed the released models is strong. It would be wrong to read this as showing that domain adaptation cannot work; we tried one recipe at one scale, with a validation task too easy to guide choices.
+
+\section*{Limitations}
+This paper is mainly a retrieval audit. Its generation study is small and local: 500 PubMedQA questions, one base generator, next-token scoring only. The published LoRA adapters could not be evaluated because their weights are NaN, and we did not train replacements. It measures neither faithfulness nor hallucination, and it involved no human raters or clinical outcome. The benchmarks are scientific abstracts and NIH-sourced question--answer text, not real consumer queries, and not the encyclopedia the published models were trained on, so our test is out of domain for them. The original training data and code were unavailable, so we audit behaviour, not the training procedure. Our re-training is a single recipe with a saturated validation set and a tuning grid whose best point is at its edge. BM25 uses a Python implementation whose scores differ somewhat from the usual Anserini baseline. MedQuAD answers were truncated to each model's maximum input length (256 tokens for MiniLM variants, 512 for BGE, E5 and MedCPT). The comparison of our model with the best external baseline per dataset is post hoc.
+
+\section*{Ethics Statement}
+No human subjects or personal data were involved. Data are public (BEIR sets, MedQuAD under CC BY 4.0, MedlinePlus text in the public domain); we redistribute none of it. The audited project's training text came from a copyrighted encyclopedia that had been committed to its public repository; the author removed it from the repository's history and we did not use it. The models are research artefacts, not medical advice tools, and must not be used for diagnosis or treatment decisions.
+
+\section*{LLM Use Disclosure}
+An AI coding assistant (Claude Code) wrote and ran the evaluation code, searched for and verified references, and drafted this text under the author's direction. The author is responsible for every claim and must confirm each against the repository before submission. Venue-specific disclosure wording must be checked against the final call for papers.
+
+\bibliography{references}
+\bibliographystyle{acl_natbib}
+\end{document}
