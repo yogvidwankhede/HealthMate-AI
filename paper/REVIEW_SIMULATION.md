@@ -96,3 +96,9 @@ Human subjects: none in this paper.
 Priority: (1) pick the venue format and trim to a workshop short or full paper; (2) either strengthen or drop the RAG section;
 (3) matched-truncation MedQuAD rerun; (4) a stronger re-training baseline; (5) anonymised artefact link; (6) author-only items in
 HUMAN_TODO.md; (7) read-through of every cited paper for the sentence it supports.
+
+## Update 2026-10-04: citation read-through
+Abstracts read for C-Pack (BGE English models are released with it), model soups (averaging improves accuracy and robustness; the
+draft wrongly said "reduce variance", now fixed), Smart Reply (in-batch negatives confirmed in the text), and EWC (about sequential-task
+forgetting; the draft's wording was too general, now fixed). Titles and first authors of all other references were checked against
+arXiv/Crossref; I did not read their full text.
