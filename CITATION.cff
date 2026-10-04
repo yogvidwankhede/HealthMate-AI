@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it. Update with the preprint DOI when available."
+title: "HealthMate-AI"
+type: software
+authors:
+  - family-names: "Wankhede"
+    given-names: "Yogvid"
+repository-code: "https://github.com/yogvidwankhede/HealthMate-AI"
+license: Apache-2.0

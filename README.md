@@ -1,10 +1,18 @@
 # 🏥 HealthMate-AI: Medical Question-Answering Chatbot
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7.svg)](https://render.com)
 
 > **A Retrieval-Augmented Generation (RAG) medical chatbot delivering reliable, grounded medical information through fine-tuned embeddings and LLMs.**
+> **Status notice (2026-09-30).** Several files listed under *Project Structure* (the fine-tuning
+> scripts, notebooks and question CSVs) are not in this repository, and the headline numbers
+> below (Spearman 0.8039, +18.31%, 93.3% top-3) cannot currently be reproduced from it. A
+> course report gives a different ensemble figure (0.7552), and independent zero-shot tests on
+> BEIR SciFact, NFCorpus and TREC-COVID show the published HealthMate checkpoints scoring far
+> below their base model, and every tensor in the three published LoRA adapters is NaN (they cannot be used). See `paper/` on the research branch. The Gale Encyclopedia text is
+> copyrighted and is not distributed. The numbers below are historical claims, not verified results.
+
 ---
 
 ## 📋 Table of Contents
@@ -142,18 +150,19 @@ model = PeftModel.from_pretrained(base, "yogvidwankhede/healthmate-mistral-7b-me
 
 **Evaluation on 535 medical questions:**
 
-- **BLEU Score**: [Your actual score]
-- **ROUGE-L Score**: [Your actual score]
-- **Max Score**: [Your actual score]
+- **BLEU (unigram precision, not standard BLEU)**: 0.338 mean (`evaluation_results/evaluation_summary_LATEST.json`)
+- **ROUGE-L (own implementation)**: 0.263 mean
+- **Max Score**: 0.341 mean
+- Both miss the script's own 0.5 target; the per-query CSV is not in the repo.
 
-*Metrics computed against reference answers from medical experts*
+*Reference-answer provenance is not documented in this repository.*
 
 ### Key Improvements
 
 ✅ **18.31% better semantic understanding** of medical queries  
 ✅ **Improved cluster consistency** - medical concepts properly grouped  
 ✅ **Higher IIDR metric** - better embedding space structure  
-✅ **Reduced hallucination** - responses grounded in encyclopedia text
+⚠️ Hallucination was not measured.
 
 ---
 
@@ -506,9 +515,9 @@ If deployment fails with "Out of memory":
 
 ### Machine Learning
 - **PyTorch** 2.5.1 - Deep learning framework
-- **Transformers** 4.37.2 - Hugging Face models
+- **Transformers** 4.56.1 (see requirements.txt) - Hugging Face models
 - **Sentence-Transformers** 4.1.0 - Embedding models
-- **PEFT** 0.7.1 - Parameter-efficient fine-tuning (LoRA)
+- **PEFT** 0.17.1 (see requirements.txt) - Parameter-efficient fine-tuning (LoRA)
 
 ### Vector Database
 - **Pinecone** 3.0.0 - Vector storage & search
@@ -584,7 +593,7 @@ We welcome contributions! Please follow these steps:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file. It started from the Apache-2.0 tutorial project [entbappy/Build-a-Complete-Medical-Chatbot-with-LLMs-LangChain-Pinecone-Flask-AWS](https://github.com/entbappy/Build-a-Complete-Medical-Chatbot-with-LLMs-LangChain-Pinecone-Flask-AWS) and keeps its notices.
 
 ---
 
@@ -606,8 +615,8 @@ If you use this work in your research, please cite:
 ```bibtex
 @misc{wankhede2024healthmate,
   title={HealthMate-AI: A Retrieval-Augmented Generation Medical Chatbot with Fine-Tuned Embeddings},
-  author={Wankhede, Yogvid and Nan, Leonardo},
-  year={2024},
+  author={Wankhede, Yogvid},
+  year={2025},
   institution={Washington University in St. Louis},
   course={ESE 5971 - Practicum in Data Analytics and Statistics}
 }
