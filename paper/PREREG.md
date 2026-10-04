@@ -110,3 +110,19 @@ and accuracy 0.156; that run was discarded and re-run with scores saved):
 Amendment 5 (2026-10-04, exploratory, after seeing all main results; prompted by the simulated review): MedQuAD was re-run for
 the base, published 3-fold and our averaged model with max_seq_length 512 (the default for MiniLM variants is 256), to check whether
 truncation drives the gaps. Output files carry the tag '-seq512'. This is a post hoc robustness check, not a new primary result.
+
+Amendment 6 (2026-10-04, written BEFORE any run of the recipes below; all main results above were already known, so this is a
+follow-up study, not a fresh preregistration): a stronger re-training baseline, prompted by the simulated review.
+- Question: does a better-designed fine-tuning recipe on the same MedlinePlus data beat the base model?
+- Recipes (all start from all-MiniLM-L6-v2, same topic split, sentence-transformers trainer, MultipleNegativesRankingLoss):
+  R1 = (anchor, chunk, hard negative): negative is a chunk of a DIFFERENT topic ranked 5 to 30 by the base model for that anchor,
+  one drawn at random with a fixed seed. R2 = R1 plus replay of general question-answer pairs (sentence-transformers/natural-questions,
+  an equal number of pairs, sampled with seed 13; its licence was not confirmed, so it is used locally and never redistributed).
+- Grid: lr in {5e-6, 1e-5, 2e-5}, epochs in {1, 2}, seed 13, for each recipe (12 runs).
+- Selection data (new, because the MedlinePlus validation task is saturated): MedQuAD sources GARD and GHR are the DEV split;
+  nDCG@10 on their queries (corpus = all 14,798 answers) picks the recipe and setting. Final report uses the TEST split = CancerGov,
+  NIDDK, NINDS, SeniorHealth, NHLBI and CDC queries, plus SciFact, NFCorpus and TREC-COVID, none of which are used for selection.
+  Baselines and the earlier models are re-scored on the same DEV/TEST split from their saved per-query results (no re-run needed).
+- Final models: the selected setting with seeds 13, 42, 2024 and their uniform weight average.
+- Primary test: paired bootstrap of the averaged model against base MiniLM on each test set; Holm over these four comparisons.
+- If no recipe beats base, that is the result.
