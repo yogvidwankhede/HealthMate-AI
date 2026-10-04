@@ -15,7 +15,7 @@
 8. Mint a Zenodo DOI (link the repo in Zenodo settings) and add it to CITATION.cff.
 9. If you want clinician evaluation: ask WashU IRB whether it needs review or exemption, then recruit raters.
    None was done; the paper makes no clinical claim.
-10. Archive the MedlinePlus XML you used (checksum in the release) so the fine-tuning set can be rebuilt.
+10. Deposit paper/PREREG.md on OSF (or another timestamped registry) before any further runs, and archive the MedlinePlus XML you used (checksum in the release) so the fine-tuning set can be rebuilt.
 11. Check whether you hold a UMLS licence if you want BioLORD added (excluded here).
 12. Review the research branch diff and merge it yourself; nothing new has been pushed except the
     approved history rewrite.

@@ -102,3 +102,12 @@ Abstracts read for C-Pack (BGE English models are released with it), model soups
 draft wrongly said "reduce variance", now fixed), Smart Reply (in-batch negatives confirmed in the text), and EWC (about sequential-task
 forgetting; the draft's wording was too general, now fixed). Titles and first authors of all other references were checked against
 arXiv/Crossref; I did not read their full text.
+
+## Re-assessment after the follow-up work (2026-10-04)
+Addressed: (2) stronger re-training baseline with a held-out dev split (result: matches base within noise, does not exceed it); (3) matched-truncation
+MedQuAD check; (4) RAG redesigned so retrieval can matter (oracle beats no-context by 0.17); citation wording fixed; anonymised supplement builder added.
+Still open and honest: the contribution remains an audit plus null results (low novelty); the preregistration is not on an external registry; the
+original training recipe is unavailable so the cause of the collapse is untested; only one replay corpus with unconfirmed licence; no human or
+faithfulness evaluation; each cited paper's full text was not read. Revised scores (my judgement): soundness 3.5, excitement 2, reproducibility 4,
+confidence 3. Recommendation: **suitable for a workshop or Findings-style submission after the author-only steps; still not a main-track paper.**
+Submission-blocking items are now author-only: authorship/IP, venue call confirmation, GitHub purge, anonymised link, ORCID/funding, final read-through.
