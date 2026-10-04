@@ -7,7 +7,7 @@ langchain==0.3.26
 langchain-core==0.3.75
 langchain-pinecone==0.2.8
 langchain-openai==0.3.24
-pinecone==7.3.0
+pinecone==10.0.0
 
 # OpenAI
 openai==1.106.1
