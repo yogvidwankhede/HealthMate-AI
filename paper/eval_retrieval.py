@@ -113,11 +113,15 @@ def main():
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--model", required=True, help="bm25 | medcpt | a key of MODELS | path:<dir> | hybrid:<model> (BM25+dense RRF)")
     ap.add_argument("--max-seq", type=int, default=None, help="override max_seq_length for dense models")
+    ap.add_argument("--sources", default=None, help="comma list of MedQuAD source prefixes; keep only those queries")
     ap.add_argument("--tag", default=None, help="name used in the output filename")
     ap.add_argument("--root", default="data/beir")
     ap.add_argument("--out", default="paper/results")
     a = ap.parse_args()
     corpus, queries, qrels = load(a.dataset, a.root)
+    if a.sources:
+        keep = tuple(x + ":" for x in a.sources.split(","))
+        queries = {q: t for q, t in queries.items() if q.startswith(keep)}; qrels = {q: r for q, r in qrels.items() if q in queries}
     ids, txt = list(corpus), list(corpus.values())
     qids, qtxt = list(queries), list(queries.values())
     t0, msl = time.time(), None
