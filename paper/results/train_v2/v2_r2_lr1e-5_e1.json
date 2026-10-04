@@ -1,0 +1,7 @@
+{
+ "recipe": "r2",
+ "lr": 1e-05,
+ "epochs": 1,
+ "seed": 13,
+ "n_med_triplets": 6666
+}

@@ -137,3 +137,7 @@ MedlinePlus corpus cannot answer PubMedQA questions; amendment 3's results stay 
   'yes' and 'no' first-token scores. Metrics: accuracy with bootstrap 95% CI, retrieval hit rate (gold abstract at rank 1), paired
   difference vs no context. The LoRA comparison is not possible and is reported as such.
 - Interpretation rule: if oracle context does not beat no-context accuracy, retrieval cannot help and the test is uninformative.
+
+Amendment 6 outcome (2026-10-04): DEV nDCG@10 for base MiniLM was 0.693; all 12 grid settings were lower (0.607 to 0.659). By the
+preregistered rule the selected setting is recipe R2, lr 5e-6, 1 epoch (dev 0.659). Final models (3 seeds + average) are trained
+and evaluated on the TEST split and the BEIR sets as specified, even though the dev result already suggests no gain.
