@@ -91,7 +91,7 @@ def rrf(lists, k=60):
     return sorted(sc, key=sc.get, reverse=True)[:100]
 
 
-def rank_dense(name, corpus_ids, corpus_txt, qtxt):
+def rank_dense(name, corpus_ids, corpus_txt, qtxt, max_seq=None):
     import torch
     from sentence_transformers import SentenceTransformer
     if name.startswith("path:"):  # local fine-tuned checkpoint, no prefixes
@@ -100,6 +100,7 @@ def rank_dense(name, corpus_ids, corpus_txt, qtxt):
         hf, qp, pp = MODELS[name]
     dev = "mps" if torch.backends.mps.is_available() else "cpu"
     m = SentenceTransformer(hf, device=dev)
+    if max_seq: m.max_seq_length = max_seq
     D = m.encode([pp + t for t in corpus_txt], batch_size=64, normalize_embeddings=True,
                  convert_to_numpy=True, show_progress_bar=False)
     Q = m.encode([qp + q for q in qtxt], batch_size=64, normalize_embeddings=True, convert_to_numpy=True)
@@ -111,6 +112,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--model", required=True, help="bm25 | medcpt | a key of MODELS | path:<dir> | hybrid:<model> (BM25+dense RRF)")
+    ap.add_argument("--max-seq", type=int, default=None, help="override max_seq_length for dense models")
     ap.add_argument("--tag", default=None, help="name used in the output filename")
     ap.add_argument("--root", default="data/beir")
     ap.add_argument("--out", default="paper/results")
@@ -124,7 +126,7 @@ def main():
             return rank_bm25(ids, txt, qtxt), None
         if m == "medcpt":
             return rank_medcpt(ids, txt, qtxt)
-        return rank_dense(m, ids, txt, qtxt)
+        return rank_dense(m, ids, txt, qtxt, a.max_seq)
     if a.model.startswith("hybrid:"):
         (b, _), (d, msl) = run("bm25"), run(a.model[7:])
         ranked = [rrf([x, y]) for x, y in zip(b, d)]

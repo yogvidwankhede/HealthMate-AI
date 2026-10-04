@@ -106,3 +106,7 @@ and accuracy 0.156; that run was discarded and re-run with scores saved):
 - Secondary analysis, added after seeing this collapse and therefore exploratory: yes-vs-no accuracy on the
   questions whose label is yes or no, choosing the higher of the 'yes' and 'no' scores. It removes the
   generator's tendency to hedge from the comparison.
+
+Amendment 5 (2026-10-04, exploratory, after seeing all main results; prompted by the simulated review): MedQuAD was re-run for
+the base, published 3-fold and our averaged model with max_seq_length 512 (the default for MiniLM variants is 256), to check whether
+truncation drives the gaps. Output files carry the tag '-seq512'. This is a post hoc robustness check, not a new primary result.

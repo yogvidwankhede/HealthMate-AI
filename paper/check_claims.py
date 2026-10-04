@@ -36,6 +36,9 @@ checks.append(("RAG acc 0.156/0.162/0.160/0.150", [round(acc[k], 3) for k in ["b
 checks.append(("max |diff vs none| <= 0.006", max(abs(acc[k] - acc["base__none"]) for k in acc) <= 0.0061))
 checks.append(("maybe share 88-93%", all(0.88 <= sum(p == "maybe" for p in v["preds"]) / 500 <= 0.93 for v in RG.values())))
 checks.append(("majority yes 0.552", round(sum(l == "yes" for l in RG["base__none"]["labels"]) / 500, 3) == 0.552))
+S5 = json.load(open(f"{R}/seq512.json"))
+checks.append(("seq512 MedQuAD 0.591/0.529/0.164", [round(S5["ndcg@10"][k], 3) for k in ["base", "ours", "published"]] == [0.591, 0.529, 0.164]))
+checks.append(("seq512 ours-base -0.063 and CI excludes 0", round(S5["ours_minus_base"]["diff"], 3) == -0.063 and S5["ours_minus_base"]["ci"][1] < 0))
 bad = [n for n, ok in checks if not ok]
 for n, ok in checks: print("OK  " if ok else "FAIL", n)
 sys.exit(1 if bad else 0)
