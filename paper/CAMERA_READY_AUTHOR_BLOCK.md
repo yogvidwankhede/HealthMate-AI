@@ -3,7 +3,7 @@
 Use only after acceptance or for an arXiv preprint. The anonymous submission keeps "Anonymous submission".
 
 - Author: Yogvid Wankhede (sole author, per author decision 2026-10-05)
-- Affiliation: Independent Researcher (the decision used for the author's other paper). Decided 2026-10-05 after reading the WashU IP policy (effective 2023-05-31; graduate students: University owns IP only if significant University resources or funded/sponsored research; copyright in papers for credit stays with the student). Author confirmed 2026-10-05: no WashU computers or labs were used for this project. Not yet confirmed: that the practicum had no outside sponsor or IP agreement (unlikely; check the syllabus if in doubt). Basis: the original
+- Affiliation: Independent Researcher (the decision used for the author's other paper). Decided 2026-10-05 after reading the WashU IP policy (effective 2023-05-31; graduate students: University owns IP only if significant University resources or funded/sponsored research; copyright in papers for credit stays with the student). Author confirmed 2026-10-05: no WashU computers or labs were used for this project. Also confirmed: no sponsor and no IP agreement signed; it was a final course project. The WashU IP question is settled. Basis: the original
   HealthMate-AI project was a WashU practicum (ESE 5971) done while enrolled, and the author is IP-sensitive. If WashU has any claim,
   the affiliation line and the release terms may need to change. Do not submit until this is settled.
 - Email: yogvidwankhede@gmail.com
