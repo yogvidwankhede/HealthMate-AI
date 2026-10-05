@@ -5,6 +5,8 @@
 [![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7.svg)](https://render.com)
 
 > **A Retrieval-Augmented Generation (RAG) medical chatbot delivering reliable, grounded medical information through fine-tuned embeddings and LLMs.**
+> **Research package:** the retrieval audit, preregistration, code and paper draft are in [`paper/`](paper/README.md).
+>
 > **Status notice (2026-09-30).** Several files listed under *Project Structure* (the fine-tuning
 > scripts, notebooks and question CSVs) are not in this repository, and the headline numbers
 > below (Spearman 0.8039, +18.31%, 93.3% top-3) cannot currently be reproduced from it. A
