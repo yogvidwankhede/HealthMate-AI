@@ -1,5 +1,6 @@
 # 🏥 HealthMate-AI: Medical Question-Answering Chatbot
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23171116.svg)](https://doi.org/10.5281/zenodo.23171116)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7.svg)](https://render.com)
