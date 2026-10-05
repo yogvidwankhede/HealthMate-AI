@@ -1,9 +1,12 @@
 version: 2
 updates:
+  # Version-update PRs for the web app's pinned dependencies are off until the app has tests.
+  # Security updates for pip still arrive through GitHub's security alerts.
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 0
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
