@@ -7,3 +7,7 @@ authors:
     given-names: "Yogvid"
 repository-code: "https://github.com/yogvidwankhede/HealthMate-AI"
 license: Apache-2.0
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23171116
+    description: "Concept DOI for all versions (version 0.1.0 is 10.5281/zenodo.23171117)"
