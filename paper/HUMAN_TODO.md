@@ -12,10 +12,9 @@
    setup.py author fields, Upwork link in the case-study PDF).
 6. Submit an arXiv preprint if the venue allows it (needs your arXiv account and endorsement status).
 7. Provide ORCID, funding/acknowledgements, and a statement that you verified every claim in CLAIMS.md.
-8. Mint a Zenodo DOI (link the repo in Zenodo settings) and add it to CITATION.cff.
+8. DONE 2026-10-05: Zenodo DOI 10.5281/zenodo.23171116 (concept) is in CITATION.cff and the README.
 9. If you want clinician evaluation: ask WashU IRB whether it needs review or exemption, then recruit raters.
-   None was done; the paper makes no clinical claim.
-10. Deposit paper/PREREG.md on OSF (or another timestamped registry) before any further runs, and archive the MedlinePlus XML you used (checksum in the release) so the fine-tuning set can be rebuilt.
+   None was done; the paper makes no clinical claim.H. DONE 2026-10-05: OSF registration https://osf.io/pr3zd (note its registration DOI once OSF assigns one). Still archive the MedlinePlus XML you used (checksum in the release).
 11. Check whether you hold a UMLS licence if you want BioLORD added (excluded here).
 12. Review the research branch diff and merge it yourself; nothing new has been pushed except the
     approved history rewrite.
