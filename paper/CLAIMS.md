@@ -1,6 +1,6 @@
 # Claims ledger (results commit 5478083)
 
-Automated: `python paper/check_claims.py` asserts every number quoted in the paper prose against the results files (38 checks, all pass at 5478083).
+Automated: `python paper/check_claims.py` asserts every number quoted in the paper prose against the results files (39 checks, all pass at 5478083).
 
 | Claim in paper | Results file | Script |
 |---|---|---|
@@ -15,6 +15,7 @@ Automated: `python paper/check_claims.py` asserts every number quoted in the pap
 | Dataset sizes (queries, docs) | per-system JSONs (n_queries, n_docs) | eval_retrieval.py |
 | 919/93 topics, 6,666 pairs | results/train/*.json | train_finetune.py |
 
+| The three published LoRA adapter files are byte-identical (same SHA-256) | results/adapter_hashes.json | (hash of the files downloaded from the model repo) |
 | All 448 tensors of each published LoRA adapter are NaN | results/adapter_nan.json | check_adapters.py |
 | RAG on PubMedQA: base Mistral, accuracy 0.150-0.162 in all retrieval conditions; no paired difference excludes zero | results/rag/*.json, rag_summary.md | rag_eval.py, rag_analyze.py |
 | LoRA runs invalid (NaN logits), excluded | results/rag/lora*.json, rag_summary.md | rag_analyze.py |
