@@ -55,6 +55,8 @@ checks += [
  ("dev grid: base 0.693, range 0.607-0.659", (lambda g: round(g["base"], 3) == 0.693 and round(min(g["grid"]), 3) == 0.607 and round(max(g["grid"]), 3) == 0.659)({"base": json.load(open(f"{R}/medquad__dev__minilm-base.json"))["summary"]["ndcg@10"]["mean"], "grid": [json.load(open(f))["summary"]["ndcg@10"]["mean"] for f in glob.glob(f"{R}/medquad__dev__v2_*.json")]})),
  ("dev n queries 10,796", json.load(open(f"{R}/medquad__dev__minilm-base.json"))["n_queries"] == 10796),
 ]
+AH = json.load(open(f"{R}/adapter_hashes.json"))["files"]
+checks.append(("3 adapter files share one SHA-256", len({v["sha256"] for v in AH.values()}) == 1 and len(AH) == 3))
 bad = [n for n, ok in checks if not ok]
 for n, ok in checks: print("OK  " if ok else "FAIL", n)
 sys.exit(1 if bad else 0)

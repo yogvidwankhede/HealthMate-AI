@@ -1,4 +1,8 @@
-# Pre-registration (DRAFT, not yet frozen)
+# Pre-registration
+
+Deposited as a public retrospective OSF registration on 2026-10-05: https://osf.io/pr3zd (DOI 10.17605/OSF.IO/PR3ZD; archived at https://archive.org/details/osf-registrations-pr3zd-v1) . The git history of this file (tag `prereg-v1` plus dated commits) remains the primary record of when each part was decided; the OSF copy gives an outside timestamp.
+
+(Original header: draft, not yet frozen.)
 
 Nothing here has been run. This file is frozen by a git tag `prereg-v1` BEFORE
 any final experiment. After the tag, changes go in an "Amendments" section with

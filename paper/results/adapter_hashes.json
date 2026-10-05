@@ -1,0 +1,18 @@
+{
+ "repo": "yogvidwankhede/healthmate-mistral-7b-medical-lora",
+ "checked": "2026-10-05",
+ "files": {
+  "seed42_root": {
+   "file": "adapter_model.safetensors",
+   "sha256": "c845d1cb66fbd907acaee1fbf8b80188c1379a1f160bf5e52ac0e3bf0bbd7810"
+  },
+  "adapter_seed_123": {
+   "file": "adapter_seed_123/adapter_model.safetensors",
+   "sha256": "c845d1cb66fbd907acaee1fbf8b80188c1379a1f160bf5e52ac0e3bf0bbd7810"
+  },
+  "adapter_seed_999": {
+   "file": "adapter_seed_999/adapter_model.safetensors",
+   "sha256": "c845d1cb66fbd907acaee1fbf8b80188c1379a1f160bf5e52ac0e3bf0bbd7810"
+  }
+ }
+}
