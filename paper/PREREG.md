@@ -106,3 +106,38 @@ and accuracy 0.156; that run was discarded and re-run with scores saved):
 - Secondary analysis, added after seeing this collapse and therefore exploratory: yes-vs-no accuracy on the
   questions whose label is yes or no, choosing the higher of the 'yes' and 'no' scores. It removes the
   generator's tendency to hedge from the comparison.
+
+Amendment 5 (2026-10-04, exploratory, after seeing all main results; prompted by the simulated review): MedQuAD was re-run for
+the base, published 3-fold and our averaged model with max_seq_length 512 (the default for MiniLM variants is 256), to check whether
+truncation drives the gaps. Output files carry the tag '-seq512'. This is a post hoc robustness check, not a new primary result.
+
+Amendment 6 (2026-10-04, written BEFORE any run of the recipes below; all main results above were already known, so this is a
+follow-up study, not a fresh preregistration): a stronger re-training baseline, prompted by the simulated review.
+- Question: does a better-designed fine-tuning recipe on the same MedlinePlus data beat the base model?
+- Recipes (all start from all-MiniLM-L6-v2, same topic split, sentence-transformers trainer, MultipleNegativesRankingLoss):
+  R1 = (anchor, chunk, hard negative): negative is a chunk of a DIFFERENT topic ranked 5 to 30 by the base model for that anchor,
+  one drawn at random with a fixed seed. R2 = R1 plus replay of general question-answer pairs (sentence-transformers/natural-questions,
+  an equal number of pairs, sampled with seed 13; its licence was not confirmed, so it is used locally and never redistributed).
+- Grid: lr in {5e-6, 1e-5, 2e-5}, epochs in {1, 2}, seed 13, for each recipe (12 runs).
+- Selection data (new, because the MedlinePlus validation task is saturated): MedQuAD sources GARD and GHR are the DEV split;
+  nDCG@10 on their queries (corpus = all 14,798 answers) picks the recipe and setting. Final report uses the TEST split = CancerGov,
+  NIDDK, NINDS, SeniorHealth, NHLBI and CDC queries, plus SciFact, NFCorpus and TREC-COVID, none of which are used for selection.
+  Baselines and the earlier models are re-scored on the same DEV/TEST split from their saved per-query results (no re-run needed).
+- Final models: the selected setting with seeds 13, 42, 2024 and their uniform weight average.
+- Primary test: paired bootstrap of the averaged model against base MiniLM on each test set; Holm over these four comparisons.
+- If no recipe beats base, that is the result.
+
+Amendment 7 (2026-10-04, written before running, replaces the retrieval-corpus design of amendment 3 after the review found the
+MedlinePlus corpus cannot answer PubMedQA questions; amendment 3's results stay in the repo and are reported as the first design):
+- Corpus: the abstracts (joined context sections, excluding the long answer) of all 1,000 expert-labelled PubMedQA items, so a gold
+  abstract exists for every question. Questions: the same 500 drawn with seed 13, restricted to those labelled yes or no (442).
+- Retrievers: base MiniLM, published 3-fold, our averaged model (recipe of amendment 1), BGE-small (strong reference), and the selected
+  v2 model from amendment 6 once chosen. Top-1 abstract is the context. Conditions also include no context and the oracle (gold abstract).
+- Generator: base Mistral-7B-Instruct-v0.2 only (published adapters are NaN). Prompt asks for yes or no; the label is the higher of the
+  'yes' and 'no' first-token scores. Metrics: accuracy with bootstrap 95% CI, retrieval hit rate (gold abstract at rank 1), paired
+  difference vs no context. The LoRA comparison is not possible and is reported as such.
+- Interpretation rule: if oracle context does not beat no-context accuracy, retrieval cannot help and the test is uninformative.
+
+Amendment 6 outcome (2026-10-04): DEV nDCG@10 for base MiniLM was 0.693; all 12 grid settings were lower (0.607 to 0.659). By the
+preregistered rule the selected setting is recipe R2, lr 5e-6, 1 epoch (dev 0.659). Final models (3 seeds + average) are trained
+and evaluated on the TEST split and the BEIR sets as specified, even though the dev result already suggests no gain.

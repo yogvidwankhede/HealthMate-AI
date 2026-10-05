@@ -1,6 +1,6 @@
 # Claims ledger (results commit 5478083)
 
-Automated: `python paper/check_claims.py` asserts every number quoted in the paper prose against the results files (25 checks, all pass at 5478083).
+Automated: `python paper/check_claims.py` asserts every number quoted in the paper prose against the results files (38 checks, all pass at 5478083).
 
 | Claim in paper | Results file | Script |
 |---|---|---|
@@ -18,6 +18,10 @@ Automated: `python paper/check_claims.py` asserts every number quoted in the pap
 | All 448 tensors of each published LoRA adapter are NaN | results/adapter_nan.json | check_adapters.py |
 | RAG on PubMedQA: base Mistral, accuracy 0.150-0.162 in all retrieval conditions; no paired difference excludes zero | results/rag/*.json, rag_summary.md | rag_eval.py, rag_analyze.py |
 | LoRA runs invalid (NaN logits), excluded | results/rag/lora*.json, rag_summary.md | rag_analyze.py |
+
+| MedQuAD at 512 tokens: base 0.591, ours 0.529, published 0.164; gap -0.063 (CI excludes 0) | results/seq512.json | eval_retrieval.py --max-seq 512, analyze.py |
+| Stronger recipe R2: dev grid (all 12 below base 0.693; best 0.659), final test-split differences vs base (-0.006, -0.005, -0.017, -0.023) | results/medquad__dev__*.json, results/v2_summary.json | run_v2_grid.sh, run_v2_final.sh, analyze_v2.py |
+| RAG v2: accuracy and hit@1 per retriever; gold abstract 0.803 vs none 0.631; published encoder -0.061 vs base retriever (exploratory) | results/rag2/*.json, rag2_summary.md, rag2_paired.json | rag2_eval.py, rag2_analyze.py |
 
 Non-empirical statements and their sources:
 - Training code, notebooks, question CSVs are absent from the repo: file listing and git history of yogvidwankhede/HealthMate-AI at 436343f (pre-rewrite) and 6b12e35.

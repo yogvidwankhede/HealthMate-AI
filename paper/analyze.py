@@ -9,7 +9,9 @@ import numpy as np
 R = "paper/results"
 data = {}
 for f in glob.glob(f"{R}/*__*.json"):
-    j = json.load(open(f)); data.setdefault(j["dataset"], {})[j["model"]] = j
+    j = json.load(open(f))
+    if j["model"].endswith("-seq512") or j["model"].startswith("dev__") or j["model"].startswith("v2"): continue
+    data.setdefault(j["dataset"], {})[j["model"]] = j
 
 
 def paired(a, b, n=10000, seed=13):
@@ -57,3 +59,14 @@ if comps:
 json.dump([{"dataset": c[0], "a": c[1], "b": c[2], "diff": c[3], "ci": c[4], "p_raw": c[5], "p_holm": float(a)} for c, a in zip(comps, adj)] if comps else [], open(f"{R}/paired.json", "w"), indent=1)
 open(f"{R}/summary.md", "w").write("\n".join(lines) + "\n")
 print("\n".join(lines))
+
+# robustness: MedQuAD with max_seq_length 512 for the MiniLM-family models (PREREG amendment 5)
+try:
+    L = lambda m: json.load(open(f"{R}/medquad__{m}.json"))
+    b, o, h = L("minilm-base-seq512"), L("path-models-ft_avg-seq512"), L("hm-3fold-seq512")
+    out = {"ndcg@10": {k: v["summary"]["ndcg@10"]["mean"] for k, v in [("base", b), ("ours", o), ("published", h)]}}
+    for k, x in [("ours_minus_base", (o, b)), ("published_minus_base", (h, b))]:
+        d, ci, p = paired(*x); out[k] = {"diff": d, "ci": ci, "p_raw": p}
+    json.dump(out, open(f"{R}/seq512.json", "w"), indent=1)
+except FileNotFoundError:
+    pass
