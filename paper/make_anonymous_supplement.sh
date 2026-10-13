@@ -10,6 +10,10 @@ rm -f "$OUT"/paper/CAMERA_READY_AUTHOR_BLOCK.md "$OUT"/paper/make_anonymous_supp
 grep -rlE "yogvid|Yogvid|wankhede|Wankhede" "$OUT" | while read f; do
   sed -i.bak -E 's#/Users/yogvid#/home/user#g; s#yogvidwankhede/healthmate#ANON/healthmate#g; s#yogvidwankhede#ANON#g; s#Yogvid( Vishwas)? Wankhede#ANON#g; s#wankhede#anon#gI' "$f" && rm -f "$f.bak"
 done
-echo "Remaining identifying strings:"; grep -rniE "yogvid|wankhede|wustl|gmail|upwork|orcid" "$OUT" | cut -c1-160 | head -10 || true
+# strip registry and archive links that identify the author
+grep -rlE "osf\.io|zenodo|10\.5281|10\.17605|archive\.org/details/osf" "$OUT" | while read f; do
+  sed -i.bak -E 's#https?://(doi\.org/)?(osf\.io|zenodo\.org)[^ )]*#[link removed for review]#g; s#https://archive\.org/details/osf-registrations-[a-z0-9-]+#[link removed for review]#g; s#10\.5281/zenodo\.[0-9]+#[DOI removed for review]#g; s#10\.17605/OSF\.IO/[A-Za-z0-9]+#[DOI removed for review]#g' "$f" && rm -f "$f.bak"
+done
+echo "Remaining identifying strings:"; grep -rniE "yogvid|wankhede|wustl|gmail|upwork|orcid|leonardo|osf\.io|zenodo" "$OUT" | cut -c1-160 | head -10 || true
 (cd "$OUT/.." && zip -qr "$(basename $OUT).zip" "$(basename $OUT)")
 echo "built $OUT and $OUT.zip"
