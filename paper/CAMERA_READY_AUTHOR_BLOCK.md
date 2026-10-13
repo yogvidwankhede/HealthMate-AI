@@ -9,6 +9,6 @@ Use only after acceptance or for an arXiv preprint. The anonymous submission kee
 - Email: yogvidwankhede@gmail.com
 - ORCID: 0009-0004-2258-6775
 - Funding: "This work received no external funding." (confirmed by the author 2026-10-05)
-- Acknowledgements (camera-ready only; ACL review versions omit acknowledgements, and naming him or WashU would identify the author): "The audited system began as a two-student practicum project at Washington University in St. Louis, carried out with Leonardo Nan. The present study was done independently by the author." The author may invite him to contribute to the paper; if he accepts, update the author list and this block. Author's judgment 2026-10-05: he will not make claims on the work.
+- Acknowledgements (camera-ready only; ACL review versions omit acknowledgements, and naming him or WashU would identify the author): "The audited system began as a two-student practicum project at Washington University in St. Louis, carried out with Leonardo Nan. The present study was done independently by the author." Confirmed by him by email (October 2026): he asked to be listed in the acknowledgements only, not as an author. Keep the sole-author line and use the acknowledgement above.
 - Data and code: https://github.com/yogvidwankhede/HealthMate-AI, Zenodo DOI 10.5281/zenodo.23171116, OSF registration https://doi.org/10.17605/OSF.IO/PR3ZD
 - AI-use disclosure: keep the paragraph already in the paper; the venue requires it.
